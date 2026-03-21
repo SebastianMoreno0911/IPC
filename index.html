@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IPC Simulador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="flex min-h-screen flex-col">
+      <header class="border-b border-slate-800 bg-slate-900/95">
+        <div
+          class="mx-auto flex w-full max-w-[1500px] items-center justify-between gap-4 px-6 py-4"
+        >
+          <div class="space-y-1">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400"
+            >
+              IPC visual
+            </p>
+            <h1 class="text-2xl font-bold tracking-tight text-white">
+              Simulador de comunicacion entre procesos
+            </h1>
+          </div>
+        </div>
+      </header>
+
+      <main
+        class="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-6 px-6 py-6"
+      >
+        <section class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div class="space-y-6">
+            <section
+              class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-slate-950/30"
+            >
+              <div class="mb-5">
+                <div
+                  class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4"
+                >
+                  <p
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+                  >
+                    Escenario actual
+                  </p>
+                  <p
+                    id="module-description"
+                    class="mt-2 text-sm leading-6 text-slate-300"
+                  >
+                    Torre de control y aviones usando mensajes bidireccionales
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
+              >
+                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                  <button
+                    id="start-button"
+                    type="button"
+                    class="rounded-xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                  >
+                    Start
+                  </button>
+
+                  <button
+                    id="pause-button"
+                    type="button"
+                    class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                  >
+                    Pause
+                  </button>
+
+                  <button
+                    id="step-button"
+                    type="button"
+                    class="rounded-xl border border-amber-500/50 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200 transition hover:bg-amber-500/20 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  >
+                    Step
+                  </button>
+
+                  <div
+                    class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-3"
+                  >
+                    <label
+                      for="module-select"
+                      class="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+                    >
+                      Modulo
+                    </label>
+                    <select
+                      id="module-select"
+                      class="w-full bg-transparent text-sm text-slate-100 outline-none"
+                    >
+                      <option value="sockets" class="bg-slate-900">
+                        Sockets
+                      </option>
+                      <option value="shared-memory" class="bg-slate-900">
+                        Memoria compartida
+                      </option>
+                      <option value="pipes" class="bg-slate-900">Pipes</option>
+                      <option value="queue" class="bg-slate-900">Queue</option>
+                      <option value="signals" class="bg-slate-900">
+                        Signals
+                      </option>
+                      <option value="full" class="bg-slate-900">Full</option>
+                    </select>
+                  </div>
+
+                  <button
+                    id="emergency-button"
+                    type="button"
+                    class="rounded-xl border border-rose-500/50 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-200 transition hover:bg-rose-500/20 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                  >
+                    Activar emergencia
+                  </button>
+                </div>
+
+                <div
+                  class="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-800 p-4"
+                >
+                  <div class="mb-3 flex items-center justify-between gap-4">
+                    <label
+                      for="speed-slider"
+                      class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+                    >
+                      Velocidad
+                    </label>
+                    <span
+                      id="speed-value"
+                      class="text-sm font-semibold text-cyan-300"
+                      >1.0x</span
+                    >
+                  </div>
+                  <input
+                    id="speed-slider"
+                    type="range"
+                    min="0.1"
+                    max="5"
+                    step="0.1"
+                    value="1"
+                    class="simulator-range w-full"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section
+              class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-slate-950/30"
+            >
+              <div class="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <p
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+                  >
+                    Area principal
+                  </p>
+                  <h2 class="text-xl font-semibold text-white">
+                    Zona de simulacion
+                  </h2>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div
+                    class="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200"
+                  >
+                    Espacio navegable
+                  </div>
+                  <div
+                    class="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300"
+                  >
+                    Desplazate si el modo full es grande
+                  </div>
+                </div>
+              </div>
+
+              <div
+                id="simulation-stage"
+                class="simulation-surface min-h-[720px] overflow-auto rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-6"
+                aria-label="Area de simulacion IPC"
+              ></div>
+            </section>
+          </div>
+
+          <aside class="space-y-6">
+            <section
+              class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-slate-950/30"
+            >
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+              >
+                Estado
+              </p>
+              <h2 class="mt-1 text-xl font-semibold text-white">
+                Resumen del modulo
+              </h2>
+
+              <dl class="mt-5 space-y-4 text-sm text-slate-300">
+                <div
+                  class="rounded-xl border border-slate-800 bg-slate-950/70 p-4"
+                >
+                  <dt
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+                  >
+                    Modulo activo
+                  </dt>
+                  <dd
+                    id="active-module-label"
+                    class="mt-2 text-base font-medium text-slate-100"
+                  >
+                    Sockets
+                  </dd>
+                </div>
+
+                <div
+                  class="rounded-xl border border-slate-800 bg-slate-950/70 p-4"
+                >
+                  <dt
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+                  >
+                    Estado del engine
+                  </dt>
+                  <dd
+                    id="engine-status"
+                    class="mt-2 text-base font-medium text-slate-100"
+                  >
+                    Pausado
+                  </dd>
+                </div>
+
+                <div
+                  class="rounded-xl border border-slate-800 bg-slate-950/70 p-4"
+                >
+                  <dt
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+                  >
+                    Velocidad actual
+                  </dt>
+                  <dd
+                    id="engine-speed-label"
+                    class="mt-2 text-base font-medium text-slate-100"
+                  >
+                    1.0x
+                  </dd>
+                </div>
+
+                <div
+                  class="rounded-xl border border-slate-800 bg-slate-950/70 p-4"
+                >
+                  <dt
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+                  >
+                    Entidades visibles
+                  </dt>
+                  <dd
+                    id="entity-count"
+                    class="mt-2 text-base font-medium text-slate-100"
+                  >
+                    0
+                  </dd>
+                </div>
+              </dl>
+            </section>
+
+            <section
+              class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-slate-950/30"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+                  >
+                    Logs
+                  </p>
+                  <h2 class="mt-1 text-xl font-semibold text-white">
+                    Panel de eventos
+                  </h2>
+                </div>
+                <button
+                  id="clear-logs-button"
+                  type="button"
+                  class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                >
+                  Limpiar
+                </button>
+              </div>
+
+              <div
+                id="log-panel"
+                class="mt-5 flex min-h-[320px] flex-col gap-3 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm text-slate-300"
+                aria-live="polite"
+              >
+                <p
+                  class="rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3"
+                >
+                  Aqui luego van a ir saliendo los eventos del modulo que este
+                  activo
+                </p>
+                <p
+                  class="rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3"
+                >
+                  Tambien sirve para mostrar estados, cambios y pasos del engine
+                </p>
+              </div>
+            </section>
+          </aside>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
